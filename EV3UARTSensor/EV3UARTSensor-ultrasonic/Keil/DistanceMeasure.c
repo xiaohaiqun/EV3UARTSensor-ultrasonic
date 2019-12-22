@@ -21,10 +21,13 @@ short int DistanceMeasure()
 	for(t=0;t<10;t++)
 		NOP();	
 	Trig=0;
-	
-	while(!P30&&(timetick>lastTick));
+	lastTick=timetick+3;
+	while((!P30)&&(timetick<lastTick));
 	if(!P30)
+	{	
+		distance=6000;
 		return 0;
+	}
 	TR1=0;       //停止定时器；
 	TH1 = TH1_INIT;
   TL1 = TL1_INIT;
@@ -35,15 +38,11 @@ short int DistanceMeasure()
 
 	T.c[1]=TL1;//数据地位
 	T.c[0]=TH1;//数据高位
-	
-	//T.d=(TH1<<8)|TL1;
-	//printf("%u    ",T.d);
 	t_us=T.d/2;
-	//printf("%u ",t_us);
+	if(TF1){
+		t_us+=34000;
+		TF1=0;
+	}
 	distance=t_us*0.17;
-	//distance++;
-	//printf("%d \n",distance);
-	//distance++;
-	//printf("distance:%u \n",distance);
 	return 1;
 }

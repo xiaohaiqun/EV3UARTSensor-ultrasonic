@@ -52,7 +52,6 @@ void reset(){
     if(riflag) {
 		  riflag=0;
       cmd =UART1Receive; //uart_receive_data;
-			UART_Send_Data(UART0, cmd);
       if(cmd == BYTE_ACK) {
 				NOP();
 				UART_Open(24000000,UART1_Timer3,SPEED);
