@@ -36,7 +36,7 @@ extern short int DistanceMeasure();
 void main (void)
 {
     ALL_GPIO_QUASI_MODE;
-    P05_PUSHPULL_MODE;    // For I/O toggle display
+    //P05_PUSHPULL_MODE;    // For I/O toggle display
 /* Modify HIRC to 24MHz for UART baud rate deviation not over 1%*/
     MODIFY_HIRC_24();
     /*UART_Open(24000000,UART0_Timer3,9600);//
@@ -60,6 +60,7 @@ void main (void)
 		P30 = 1;
 		P05_OPENDRAIN_MODE ;
 		///P05_PUSHPULL_MODE;
+		P03_OPENDRAIN_MODE;
 		//INT0_FALLING_EDGE_TRIG;              //setting trig condition level or edge
 		//ENABLE_INT0_INTERRUPT;              //INT0_Enable;
 	
@@ -68,9 +69,9 @@ void main (void)
     set_TCON_TR0;                                  //Timer0 run
 		reset();
 		loop();
-		while(1){
+		/*while(1){
 				DistanceMeasure();
 			Timer1_Delay(24000000,5,1000);
-		}
+		}*/
 }
   

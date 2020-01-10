@@ -11,6 +11,7 @@ unsigned long last_nack = 0; //上一次收到NACK或ACK的时间；
 unsigned long last_message=0;  //上次发送消息的时间
 
 void reset(){
+	P03=1;
 	while(1)
 	{
     uint8_t mode=0;
@@ -79,6 +80,7 @@ Distance D;
 void loop(){
 	while(1)
 	{
+		P03=0;
 		if(timetick - last_nack >999) 
 			reset();
 		if(riflag){
