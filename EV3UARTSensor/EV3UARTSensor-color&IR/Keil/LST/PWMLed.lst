@@ -1,0 +1,45 @@
+C51 COMPILER V9.60.0.0   PWMLED                                                            01/09/2020 16:30:02 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PWMLED
+OBJECT MODULE PLACED IN .\Output\PWMLed.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE PWMLed.c LARGE OPTIMIZE(7,SPEED) BROWSE INCDIR(..\..\Library\Device\Incl
+                    -ude;..\..\Library\StdDriver\inc) DEBUG OBJECTEXTEND PRINT(.\LST\PWMLed.lst) TABS(2) OBJECT(.\Output\PWMLed.obj)
+
+line level    source
+
+   1          #include "PWMLed.h"
+   2          void LEDInit()
+   3          {
+   4   1        PWM0_P12_OUTPUT_ENABLE;//red
+   5   1        PWM1_P11_OUTPUT_ENABLE;//green
+   6   1        PWM2_P10_OUTPUT_ENABLE;//blue
+   7   1        PWM_IMDEPENDENT_MODE;
+   8   1        PWM_CLOCK_DIV_8;
+   9   1        PWMPH = 0x30;
+  10   1        PWMPL = 0x0f;
+  11   1        /*-------- PWM start run--------------*/ 
+  12   1        set_PWMCON0_LOAD;
+  13   1        set_PWMCON0_PWMRUN;
+  14   1      }
+  15          
+  16          void LEDChange(UINT8 red,UINT8 green,UINT8 blue)
+  17          {
+  18   1        PWM0H=255-red;
+  19   1        PWM1H=255-green;
+  20   1        PWM2H=255-blue;
+  21   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     48    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,55 @@
+C51 COMPILER V9.60.0.0   SYS                                                               01/09/2020 16:30:03 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SYS
+OBJECT MODULE PLACED IN .\Output\sys.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE ..\..\Library\StdDriver\src\sys.c LARGE OPTIMIZE(7,SPEED) BROWSE INCDIR(
+                    -..\..\Library\Device\Include;..\..\Library\StdDriver\inc) DEBUG OBJECTEXTEND PRINT(.\LST\sys.lst) TABS(2) OBJECT(.\Outpu
+                    -t\sys.obj)
+
+line level    source
+
+   1          #include "MS51_16K.H"
+   2          bit BIT_TMP;
+   3          
+   4          void MODIFY_HIRC_24(void)
+   5          {
+   6   1          unsigned char data hircmap0,hircmap1;
+   7   1      /* Check if power on reset, modify HIRC */
+   8   1          if (PCON&SET_BIT4)
+   9   1          {
+  10   2              set_CHPCON_IAPEN;
+  11   2              IAPAL = 0x38;
+  12   2              IAPAH = 0x00;
+  13   2              IAPCN = READ_UID;
+  14   2              set_IAPTRG_IAPGO;
+  15   2              hircmap0 = IAPFD;
+  16   2              IAPAL = 0x39;
+  17   2              IAPAH = 0x00;
+  18   2              set_IAPTRG_IAPGO;
+  19   2              hircmap1 = IAPFD;
+  20   2              clr_CHPCON_IAPEN;
+  21   2              TA=0XAA;
+  22   2              TA=0X55;
+  23   2              RCTRIM0 = hircmap0;
+  24   2              TA=0XAA;
+  25   2              TA=0X55;
+  26   2              RCTRIM1 = hircmap1;
+  27   2              clr_CHPCON_IAPEN;
+  28   2          }
+  29   1      }
+  30          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    142    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

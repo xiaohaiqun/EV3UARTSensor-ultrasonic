@@ -1,0 +1,1 @@
+"Sensor.c" LARGE OPTIMIZE (7,SPEED) BROWSE INCDIR(..\..\Library\Device\Include;..\..\Library\StdDriver\inc) DEBUG OBJECTEXTEND PRINT(.\LST\Sensor.lst) TABS (2) OBJECT(.\Output\Sensor.obj)

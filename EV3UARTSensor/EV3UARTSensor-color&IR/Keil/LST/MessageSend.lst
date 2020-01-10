@@ -1,0 +1,122 @@
+C51 COMPILER V9.60.0.0   MESSAGESEND                                                       01/09/2020 16:30:01 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MESSAGESEND
+OBJECT MODULE PLACED IN .\Output\MessageSend.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE MessageSend.c LARGE OPTIMIZE(7,SPEED) BROWSE INCDIR(..\..\Library\Device
+                    -\Include;..\..\Library\StdDriver\inc) DEBUG OBJECTEXTEND PRINT(.\LST\MessageSend.lst) TABS(2) OBJECT(.\Output\MessageSen
+                    -d.obj)
+
+line level    source
+
+   1          #include "MessageSend.h"
+   2          void get_bytes(unsigned long val, uint8_t* bb) 
+   3          {
+   4   1        uint8_t i=0;
+   5   1        for(i=0;i<4;i++) {
+   6   2          bb[i] = (val >> (i *8)) & 0xff;
+   7   2        }
+   8   1      }
+   9          
+  10          void sendInfoMessage(uint8_t cmd, uint8_t type, 
+  11          uint8_t* Data, uint8_t len) {
+  12   1        uint8_t checksum = 0xff ^ cmd;
+  13   1        uint8_t i=0;
+  14   1        UART_Send_Data(UART1,cmd);
+  15   1        checksum ^= type;
+  16   1        UART_Send_Data(UART1,type);
+  17   1        for(i=0;i<len;i++) {
+  18   2          checksum ^= Data[i];
+  19   2          UART_Send_Data(UART1,Data[i]);
+  20   2        }
+  21   1        UART_Send_Data(UART1,checksum);
+  22   1      }
+  23          
+  24          void sendInfoLLLLHHHHMessage(uint8_t cmd, uint8_t type, 
+  25          uint8_t* DataL,uint8_t* DataH, uint8_t len) {
+  26   1        uint8_t checksum = 0xff ^ cmd;
+  27   1        uint8_t i=0;
+  28   1        UART_Send_Data(UART1,cmd);
+  29   1        checksum ^= type;
+  30   1        UART_Send_Data(UART1,type);
+  31   1        for(i=0;i<len;i++) {
+  32   2          checksum ^= DataL[i];
+  33   2          UART_Send_Data(UART1,DataL[i]);
+  34   2        }
+  35   1        for(i=0;i<len;i++) {
+  36   2          checksum ^= DataH[i];
+  37   2          UART_Send_Data(UART1,DataH[i]);
+  38   2        }
+  39   1        UART_Send_Data(UART1,checksum);
+  40   1      }
+  41          
+  42          void sendInfoWithPaddedMessage(uint8_t cmd, uint8_t type, 
+  43          uint8_t* Data, uint8_t len, uint8_t padedLenth) {
+  44   1        uint8_t checksum = 0xff ^ cmd;
+  45   1        uint8_t i=0;
+  46   1        UART_Send_Data(UART1,cmd);
+  47   1        checksum ^= type;
+  48   1        UART_Send_Data(UART1,type);
+  49   1        for(i=0;i<len;i++) {
+  50   2          checksum ^= Data[i];
+  51   2          UART_Send_Data(UART1,Data[i]);
+  52   2        }
+  53   1        for(i=0;i<padedLenth;i++)
+C51 COMPILER V9.60.0.0   MESSAGESEND                                                       01/09/2020 16:30:01 PAGE 2   
+
+  54   1          UART_Send_Data(UART1,0x00);
+  55   1        UART_Send_Data(UART1,checksum);
+  56   1      }
+  57          
+  58          void sendCMDMessage(uint8_t cmd) {
+  59   1        uint8_t checksum = 0xff ^ cmd;
+  60   1        UART_Send_Data(UART1,cmd);
+  61   1        UART_Send_Data(UART1,checksum);
+  62   1      }
+  63          
+  64          void sendDataMessageWithPaded(uint8_t cmd, uint8_t* Data, uint8_t len,uint8_t padLen) {
+  65   1        uint8_t checksum = 0xff ^ cmd;
+  66   1        uint8_t i=0;
+  67   1        UART_Send_Data(UART1,cmd);
+  68   1        for(i=0;i<len;i++) {
+  69   2          checksum ^= Data[i];
+  70   2          UART_Send_Data(UART1,Data[i]);
+  71   2        }
+  72   1        for(i=0;i<padLen;i++)
+  73   1          UART_Send_Data(UART1,0x00);
+  74   1        UART_Send_Data(UART1,checksum);
+  75   1      }
+  76          
+  77          void sendDataMessage(uint8_t cmd, uint8_t* Data, uint8_t len) {
+  78   1        uint8_t checksum = 0xff ^ cmd;
+  79   1        uint8_t i=0;
+  80   1        UART_Send_Data(UART1,cmd);
+  81   1        for(i=0;i<len;i++) {
+  82   2          checksum ^= Data[i];
+  83   2          UART_Send_Data(UART1,Data[i]);
+  84   2        }
+  85   1        UART_Send_Data(UART1,checksum);
+  86   1      }
+  87          
+  88          void sendTypeMessage(uint8_t cmd, uint8_t Data) {
+  89   1        uint8_t bb[1];
+  90   1        bb[0] = Data;
+  91   1        sendDataMessageWithPaded(cmd,bb,1);
+*** WARNING C209 IN LINE 91 OF MessageSend.c: '_sendDataMessageWithPaded': too few actual parameters
+  92   1      }
+  93          
+  94          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    853    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      53
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

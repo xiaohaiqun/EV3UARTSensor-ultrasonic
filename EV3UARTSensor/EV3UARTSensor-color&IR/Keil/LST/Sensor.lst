@@ -1,0 +1,208 @@
+C51 COMPILER V9.60.0.0   SENSOR                                                            01/09/2020 16:44:20 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SENSOR
+OBJECT MODULE PLACED IN .\Output\Sensor.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Sensor.c LARGE OPTIMIZE(7,SPEED) BROWSE INCDIR(..\..\Library\Device\Incl
+                    -ude;..\..\Library\StdDriver\inc) DEBUG OBJECTEXTEND PRINT(.\LST\Sensor.lst) TABS(2) OBJECT(.\Output\Sensor.obj)
+
+line level    source
+
+   1          #include "Sensor.h"
+   2          #include "MessageSend.h"
+   3          #include "I2CDev.h"
+   4          //#include "DistanceMeasure.h"
+   5          #define MY_TYPE 29
+   6          #define MY_NAME0 "COLOR-PROXI"
+   7          #define MY_NAME1 "IR-PROX"
+   8          #define SPEED 57600
+   9          
+  10          #define NOP() {_nop_();_nop_();_nop_();_nop_();}
+  11          
+  12          unsigned long last_nack = 0; //上一次收到NACK或ACK的时间；
+  13          unsigned long last_message=0;  //上次发送消息的时间
+  14          
+  15          void reset(){
+  16   1        P03=0;
+  17   1        while(1)
+  18   1        {
+  19   2          uint8_t mode=0;
+  20   2          uint8_t bb[4];
+  21   2          uint8_t speed[4];
+  22   2          uint32_t L=0,H=0;
+  23   2          long m=0;
+  24   2          uint8_t cmd=0;
+  25   2          UART_Open(24000000,UART1_Timer3,2400);  
+  26   2          sendTypeMessage(CMD_TYPE, MY_TYPE);
+  27   2          bb[0] = 2; // modes = 3
+  28   2          bb[1] = 0; // views = 1
+  29   2          sendDataMessageWithPaded(CMD_MODES, bb, 2, 0);
+  30   2          get_bytes(SPEED, speed);
+  31   2          sendDataMessageWithPaded(CMD_SPEED, speed, 4, 0);
+  32   2          NOP();
+  33   2          ///////////////////////////M0DE0 Message//////////////////////////////////
+  34   2          /*mode=0x00;
+  35   2          sendInfoWithPaddedMessage(CMD_INFO | (4 << CMD_LLL_SHIFT | mode), 0, (uint8_t*) MY_NAME0, 11, 5);
+  36   2          L=0,H=1024;
+  37   2          sendInfoLLLLHHHHMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0x01,(uint8_t*)&L ,(uint8_t*)&H , 4);//r
+             -awLLLL,rawHHHH
+  38   2          
+  39   2          L=0,H=1024;
+  40   2          sendInfoLLLLHHHHMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode ), 0x03,(uint8_t*)&L ,(uint8_t*)&H , 4);//
+             -SILLLL,SIHHHH
+  41   2          
+  42   2          sendInfoWithPaddedMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0x04, "Co", 2, 6);//symbol
+  43   2          
+  44   2          bb[0] = 5; // sets  有5项，RGBC+proxi
+  45   2          bb[1] = 1; // format Data16  每一项的数据类型 16位整数
+  46   2          bb[2] = 4; // figures      要显示的位数，4位（包括小数点）
+  47   2          bb[3] = 0; // decimals      要显示的小数位数。
+  48   2          sendInfoMessage(CMD_INFO | (2 << CMD_LLL_SHIFT | mode), 0x80, bb, 4);*/
+  49   2          //////////////////////////////////////////////////////////////////////////////////////////////////////
+  50   2          //More MODE....
+  51   2          
+  52   2          mode=0x00;
+C51 COMPILER V9.60.0.0   SENSOR                                                            01/09/2020 16:44:20 PAGE 2   
+
+  53   2          sendInfoWithPaddedMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0, (uint8_t*) MY_NAME1, 7, 1);
+  54   2          L=0,H=51266;
+  55   2          sendInfoLLLLHHHHMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0x01,(uint8_t*)&L ,(uint8_t*)&H , 4);//r
+             -awLLLL,rawHHHH
+  56   2          
+  57   2          L=0,H=51266;
+  58   2          sendInfoLLLLHHHHMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode ), 0x03,(uint8_t*)&L ,(uint8_t*)&H , 4);//
+             -SILLLL,SIHHHH
+  59   2          
+  60   2          sendInfoWithPaddedMessage(CMD_INFO | (2 << CMD_LLL_SHIFT | mode), 0x04, "pct", 3, 1);//symbol
+  61   2          
+  62   2          bb[0] = 1; // sets  有1项，IR+proxi
+  63   2          bb[1] = 0; // format Data16  每一项的数据类型 8位整数
+  64   2          bb[2] = 3; // figures      要显示的位数，4位（包括小数点）
+  65   2          bb[3] = 0; // decimals      要显示的小数位数。
+  66   2          sendInfoMessage(CMD_INFO | (2 << CMD_LLL_SHIFT | mode), 0x80, bb, 4);
+  67   2          
+  68   2          /*mode=0x00;
+  69   2          sendInfoWithPaddedMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0, (uint8_t*) MY_NAME1, 7, 1);
+  70   2          L=0,H=100;
+  71   2          sendInfoLLLLHHHHMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0x01,(uint8_t*)&L ,(uint8_t*)&H , 4);//r
+             -awLLLL,rawHHHH
+  72   2          
+  73   2          L=0,H=100;
+  74   2          sendInfoLLLLHHHHMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode ), 0x03,(uint8_t*)&L ,(uint8_t*)&H , 4);//
+             -SILLLL,SIHHHH
+  75   2          
+  76   2          sendInfoWithPaddedMessage(CMD_INFO | (3 << CMD_LLL_SHIFT | mode), 0x04, "pct", 3, 5);//symbol
+  77   2          
+  78   2          bb[0] = 1; // sets  有1项，IR+proxi
+  79   2          bb[1] = 0; // format Data16  每一项的数据类型 8位整数
+  80   2          bb[2] = 3; // figures      要显示的位数，4位（包括小数点）
+  81   2          bb[3] = 0; // decimals      要显示的小数位数。
+  82   2          sendInfoMessage(CMD_INFO | (2 << CMD_LLL_SHIFT | mode), 0x80, bb, 4);*/
+  83   2      
+  84   2          
+  85   2          UART_Send_Data(UART1,BYTE_ACK);
+  86   2          m = timetick;//发送ACK后传感器开始计时，超过1s未回复则传感器复位。
+  87   2          
+  88   2          while(!riflag && timetick - m <1000);
+  89   2          if(riflag) {
+  90   3            riflag=0;
+  91   3            cmd =UART1Receive; //uart_receive_data;
+  92   3            if(cmd == BYTE_ACK) {
+  93   4              NOP();
+  94   4              UART_Open(24000000,UART1_Timer3,SPEED);
+  95   4              //UART_Send_Data(UART1, 0x00);
+  96   4              //UART_Send_Data(UART1, 0xFF);        
+  97   4              NOP();
+  98   4              last_nack = timetick;
+  99   4              break;
+ 100   4            }
+ 101   3          }
+ 102   2        }
+ 103   1      }
+ 104          uint8_t cmd;
+ 105          uint8_t len=0;
+ 106          uint8_t dataLenth=0;
+ 107          uint8_t n=0;
+ 108          //uint8_t Data[16]={0};
+ 109          //extern 
+ 110          uint16_t IR16=0;
+C51 COMPILER V9.60.0.0   SENSOR                                                            01/09/2020 16:44:20 PAGE 3   
+
+ 111          uint8_t IR8=0;
+ 112          
+ 113          typedef union{
+ 114            uint16_t d;
+ 115            char c[2];
+ 116          }Distance;
+ 117          Distance D;
+ 118          uint8_t Data8[10]={33,22,3,4,5,6,7,8,9,0};
+ 119          UINT8 Data[8];
+ 120          UINT16 Red=0,Green=0,Blue=0,Dis=0,Clear=0;
+ 121          void loop(){
+ 122   1        while(1)
+ 123   1        {
+ 124   2          P03=1;
+ 125   2          if(timetick - last_nack >999999) 
+ 126   2            reset();
+ 127   2          if(riflag){
+ 128   3            riflag=0;
+ 129   3            cmd = UART1Receive;
+ 130   3            last_nack = timetick;
+ 131   3            switch(cmd)
+ 132   3            {
+ 133   4              case BYTE_NACK:
+ 134   4                last_nack = timetick;
+ 135   4                //sendDataMessageWithPaded(CMD_DATA | (1 << CMD_LLL_SHIFT),Data, 2);
+ 136   4                break;
+ 137   4              case BYTE_ACK:
+ 138   4                break;
+ 139   4              case CMD_SELECT:
+ 140   4                //SelectedMode=Receive_Data(UART1);
+ 141   4                break;
+ 142   4              default:
+ 143   4                if((UART1Receive&0xC7)==0x44)//write Data ordle
+ 144   4                {
+ 145   5                  len=(UART1Receive&0x38)>>3;
+ 146   5                  dataLenth=0x02<<len;
+ 147   5                  for(n=0;n<dataLenth;n++)
+ 148   5                  {
+ 149   6                    //Data[n]=Receive_Data(UART1);
+ 150   6                  }           
+ 151   5                  //To do
+ 152   5                }         
+ 153   4                break;
+ 154   4              }
+ 155   3          }
+ 156   2          if (timetick- last_message >50 ) {
+ 157   3            //I2C_Read (0x94,Data8,2);//IR
+ 158   3            //Data8[0]=0x01;
+ 159   3            //Data8[1]=0x00;
+ 160   3            sendDataMessageWithPaded(CMD_DATA |(1 <<CMD_LLL_SHIFT ),Data8, 1, 1); // mode 0, length 1,padding 1
+ 161   3            last_message = timetick;
+ 162   3            I2C_Read (0x94,Data8,2);//IR
+ 163   3            D.c[0]=Data8[1];
+ 164   3            D.c[1]=Data8[0];
+ 165   3            D.d=D.d/4;
+ 166   3            Data8[1]=D.c[0];
+ 167   3            Data8[0]=D.c[1];
+ 168   3            //Data8[0]=((Data8[1]<<8|Data[0])/4)<<8;
+ 169   3            //Data8[1]=Data8[1]>>2;
+ 170   3          }
+ 171   2        }
+ 172   1      }
+C51 COMPILER V9.60.0.0   SENSOR                                                            01/09/2020 16:44:20 PAGE 4   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    879    ----
+   CONSTANT SIZE    =     12    ----
+   XDATA SIZE       =     45      22
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,75 @@
+C51 COMPILER V9.60.0.0   DISTANCEMEASURE                                                   01/03/2020 15:50:07 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DISTANCEMEASURE
+OBJECT MODULE PLACED IN .\Output\DistanceMeasure.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE DistanceMeasure.c LARGE OPTIMIZE(7,SPEED) BROWSE INCDIR(..\..\Library\De
+                    -vice\Include;..\..\Library\StdDriver\inc) DEBUG OBJECTEXTEND PRINT(.\LST\DistanceMeasure.lst) TABS(2) OBJECT(.\Output\Di
+                    -stanceMeasure.obj)
+
+line level    source
+
+   1          #include "DistanceMeasure.h"
+   2          
+   3          #define TH1_INIT        0x00 
+   4          #define TL1_INIT        0x00
+   5          typedef union{
+   6            uint16_t d;
+   7            char c[2];
+   8          }time;
+   9          time T;
+  10          short int distance=0;
+  11          unsigned long lastTick=0;
+  12          uint16_t t_us=0;
+  13          extern unsigned long timetick;
+  14          uint16_t TH=0,TL=0;
+  15          short int DistanceMeasure()
+  16          {
+  17   1        uint8_t t;
+  18   1        Trig=0;
+  19   1        NOP();
+  20   1        Trig=1;
+  21   1        for(t=0;t<10;t++)
+  22   1          NOP();  
+  23   1        Trig=0;
+  24   1        lastTick=timetick+3;
+  25   1        while((!P30)&&(timetick<lastTick));
+  26   1        if(!P30)
+  27   1        { 
+  28   2          distance=6000;
+  29   2          return 0;
+  30   2        }
+  31   1        TR1=0;       //停止定时器；
+  32   1        TH1 = TH1_INIT;
+  33   1        TL1 = TL1_INIT;
+  34   1        TR1=1;      //启动定时器;
+  35   1        while(P30);
+  36   1        
+  37   1        TR1=0;      //停止
+  38   1      
+  39   1        T.c[1]=TL1;//数据地位
+  40   1        T.c[0]=TH1;//数据高位
+  41   1        t_us=T.d/2;
+  42   1        if(TF1){
+  43   2          t_us+=34000;
+  44   2          TF1=0;
+  45   2        }
+  46   1        distance=t_us*0.17;
+  47   1        return 1;
+  48   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    210    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.60.0.0   DISTANCEMEASURE                                                   01/03/2020 15:50:07 PAGE 2   
+
+   XDATA SIZE       =     14    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

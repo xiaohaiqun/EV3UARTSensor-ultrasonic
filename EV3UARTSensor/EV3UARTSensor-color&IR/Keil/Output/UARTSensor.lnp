@@ -1,0 +1,12 @@
+".\Output\MessageSend.obj",
+".\Output\Sensor.obj",
+".\Output\main.obj",
+".\Output\I2CDec.obj",
+".\Output\PWMLed.obj",
+".\Output\delay.obj",
+".\Output\sys.obj",
+".\Output\uart.obj",
+".\Output\STARTUP.obj" 
+TO ".\Output\UARTSensor" 
+PRINT(".\LST\UARTSensor.m51") RAMSIZE(256) 
+DISABLEWARNING (16) 
